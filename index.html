@@ -35,7 +35,7 @@
     <script>
 
             // Create a new AudioContext object
-            const audioContext = new AudioContext() || webkitAudioContext;
+            const audioContext = new AudioContext() || window.webkitAudioContext;
 
 // Get all drum buttons
 const drumButtons = document.querySelectorAll(".drum-button");
