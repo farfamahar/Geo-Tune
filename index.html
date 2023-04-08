@@ -11,17 +11,25 @@
     rel="stylesheet"
     href="style.css"
   />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+
   </head>
   <body>
     <div class="flex flex-col justify-center items-center h-screen">
-      <div class="mb-8 text-3xl" id="coordinates"></div>
+      <div class="mb-8">
+      <h1 class="text-4xl mb-2"> Geo Tune</h1>
+      <p class="text-xl"> Play a different tune based on your precise location</p>
+    </div>
       <div class="">
         <button
           class="button drum-button bg-gray-200 border border-gray-300 rounded-full text-center cursor-pointer"
         >
-          Play geo tune
+        <i class="fas fa-play"></i>
         </button>
       </div>
+      <div class="mt-16 text-3xl" id="coordinates"></div>
+
     </div>
 
     <script>
