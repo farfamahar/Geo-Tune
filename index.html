@@ -125,6 +125,7 @@ playNextNote();
 // Event listener for drum buttons
 drumButtons.forEach((button) => {
 button.addEventListener("click", () => {
+
 // Get user's current position and display coordinates
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => {
@@ -136,7 +137,9 @@ if (navigator.geolocation) {
     const latitudeDigits = String(latitude.toFixed(8)).match(/\d/g);
     const longitudeDigits = String(longitude.toFixed(8)).match(/\d/g);
     const digits = [...latitudeDigits, ...longitudeDigits];
+    if(!isPlaying){
     playMelody(digits);
+    }
   });
 } else {
   // Geolocation is not supported
