@@ -45,30 +45,83 @@
       const drumButtons = document.querySelectorAll(".drum-button");
 
       // Loop through all drum buttons and add click event listener
+
       // Loop through all drum buttons and add click event listener
       drumButtons.forEach((button) => {
         button.addEventListener("click", () => {
           // Create a new OscillatorNode object
           const oscillator = audioContext.createOscillator();
+
           // Generate a random frequency between 100 and 2000 Hz
           const frequency = Math.floor(Math.random() * (2000 - 100 + 1) + 100);
+
           // Set the oscillator frequency to the random frequency
           oscillator.frequency.setValueAtTime(
             frequency,
             audioContext.currentTime
           );
-          // Set the oscillator type to sine wave
-          oscillator.type = "sine";
-          // Connect the oscillator to the AudioContext destination
-          oscillator.connect(audioContext.destination);
+
+          // Set the oscillator type to a random waveform (sine, square, sawtooth, or triangle)
+          const waveform = ["sine", "square", "sawtooth", "triangle"][
+            Math.floor(Math.random() * 4)
+          ];
+          oscillator.type = waveform;
+
+          // Add an envelope to the sound to shape its amplitude over time
+          const gainNode = audioContext.createGain();
+          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+          gainNode.gain.linearRampToValueAtTime(
+            0.8,
+            audioContext.currentTime + 0.05
+          );
+          gainNode.gain.exponentialRampToValueAtTime(
+            0.1,
+            audioContext.currentTime + 0.2
+          );
+          gainNode.connect(audioContext.destination);
+          oscillator.connect(gainNode);
+
+          // Add a low-pass filter to the sound
+          const filterNode = audioContext.createBiquadFilter();
+          filterNode.type = "lowpass";
+          filterNode.frequency.setValueAtTime(
+            Math.floor(Math.random() * 2000 + 500),
+            audioContext.currentTime
+          );
+          filterNode.connect(gainNode);
+
+          // Add distortion to the sound
+          // const distortionNode = audioContext.createWaveShaper();
+          // distortionNode.curve = makeDistortionCurve(200);
+          // filterNode.connect(distortionNode);
+
           // Start the oscillator
           oscillator.start();
-          // Stop the oscillator after 1 second
+
+          // Stop the oscillator and disconnect nodes after 1 second
           setTimeout(() => {
             oscillator.stop();
-          }, 100);
+            oscillator.disconnect();
+            gainNode.disconnect();
+            filterNode.disconnect();
+            distortionNode.disconnect();
+          }, 1000);
         });
       });
+
+      // Helper function to create a distortion curve for the WaveShaperNode
+      function makeDistortionCurve(amount) {
+        const k = typeof amount === "number" ? amount : 50;
+        const n_samples = 44100;
+        const curve = new Float32Array(n_samples);
+        const deg = Math.PI / 180;
+        let x;
+        for (let i = 0; i < n_samples; ++i) {
+          x = (i * 2) / n_samples - 1;
+          curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+        }
+        return curve;
+      }
     </script>
   </body>
 </html>
