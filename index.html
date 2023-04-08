@@ -2,31 +2,26 @@
 <html>
   <head>
     <title>Drum Board</title>
-    <!-- Load Tailwind CSS -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css"
     />
-    <style>
-      .drum-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100px;
-        height: 100px;
-        background-color: #f1f1f1;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        text-align: center;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body class="flex flex-col justify-center items-center h-screen">
-    <div class="mb-8" id="coordinates"></div>
 
-    <div class="">
-      <button class="drum-button"></button>
+    <link
+    rel="stylesheet"
+    href="style.css"
+  />
+  </head>
+  <body>
+    <div class="flex flex-col justify-center items-center h-screen">
+      <div class="mb-8 text-3xl" id="coordinates"></div>
+      <div class="">
+        <button
+          class="button drum-button bg-gray-200 border border-gray-300 rounded-full text-center cursor-pointer"
+        >
+          Play geo tune
+        </button>
+      </div>
     </div>
 
     <script>
@@ -54,9 +49,7 @@
         );
 
         // Set the oscillator type to a random waveform (sine, square, sawtooth, or triangle)
-        const waveform = ["sawtooth"][
-          Math.floor(Math.random() * 4)
-        ];
+        const waveform = ["sawtooth"][Math.floor(Math.random() * 4)];
         oscillator.type = waveform;
 
         // Add an envelope to the sound to shape its amplitude over time
