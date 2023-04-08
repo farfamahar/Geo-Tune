@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Drum Board</title>
+    <!-- Load Tailwind CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css"
+    />
+    <style>
+      .drum-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        height: 100px;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="flex justify-center items-center h-screen">
+    <div class="grid grid-cols-3 gap-4" style="width: 400px">
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+      <button class="drum-button"></button>
+    </div>
+
+    <script>
+      // Create a new AudioContext object
+      const audioContext = new AudioContext();
+
+      // Get all drum buttons
+      const drumButtons = document.querySelectorAll(".drum-button");
+
+      // Loop through all drum buttons and add click event listener
+      // Loop through all drum buttons and add click event listener
+      drumButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          // Create a new OscillatorNode object
+          const oscillator = audioContext.createOscillator();
+          // Generate a random frequency between 100 and 2000 Hz
+          const frequency = Math.floor(Math.random() * (2000 - 100 + 1) + 100);
+          // Set the oscillator frequency to the random frequency
+          oscillator.frequency.setValueAtTime(
+            frequency,
+            audioContext.currentTime
+          );
+          // Set the oscillator type to sine wave
+          oscillator.type = "sine";
+          // Connect the oscillator to the AudioContext destination
+          oscillator.connect(audioContext.destination);
+          // Start the oscillator
+          oscillator.start();
+          // Stop the oscillator after 1 second
+          setTimeout(() => {
+            oscillator.stop();
+          }, 100);
+        });
+      });
+    </script>
+  </body>
+</html>
