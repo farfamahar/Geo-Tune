@@ -22,18 +22,10 @@
       }
     </style>
   </head>
-  <body class="flex justify-center items-center h-screen">
-    <div class="grid grid-cols-3 gap-4" style="width: 400px">
-      <button class="drum-button"></button>
-      <button class="drum-button"></button>
-      <button class="drum-button"></button>
+  <body class="flex flex-col justify-center items-center h-screen">
+    <div id="coordinates"></div>
 
-      <button class="drum-button"></button>
-      <button class="drum-button"></button>
-      <button class="drum-button"></button>
-
-      <button class="drum-button"></button>
-      <button class="drum-button"></button>
+    <div class="">
       <button class="drum-button"></button>
     </div>
 
@@ -44,7 +36,19 @@
       // Get all drum buttons
       const drumButtons = document.querySelectorAll(".drum-button");
 
-      // Loop through all drum buttons and add click event listener
+      // Get the coordinates element
+      const coordinates = document.getElementById("coordinates");
+
+      // Get user's current position and display coordinates
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          coordinates.textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+        });
+      } else {
+        coordinates.textContent =
+          "Geolocation is not working";
+      }
 
       // Loop through all drum buttons and add click event listener
       drumButtons.forEach((button) => {
@@ -91,9 +95,9 @@
           filterNode.connect(gainNode);
 
           // Add distortion to the sound
-          // const distortionNode = audioContext.createWaveShaper();
-          // distortionNode.curve = makeDistortionCurve(200);
-          // filterNode.connect(distortionNode);
+          const distortionNode = audioContext.createWaveShaper();
+          distortionNode.curve = makeDistortionCurve(200);
+          filterNode.connect(distortionNode);
 
           // Start the oscillator
           oscillator.start();
@@ -105,7 +109,23 @@
             gainNode.disconnect();
             filterNode.disconnect();
             distortionNode.disconnect();
-          }, 1000);
+          }, 500);
+
+          // Get user's geolocation
+          navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            // Use latitude and longitude to modulate the frequency and filter cutoff
+            oscillator.frequency.setValueAtTime(
+              frequency + lat,
+              audioContext.currentTime
+            );
+            filterNode.frequency.setValueAtTime(
+              Math.floor(Math.random() * 2000 + 500) + lon,
+              audioContext.currentTime
+            );
+          });
         });
       });
 
