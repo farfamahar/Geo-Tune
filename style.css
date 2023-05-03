@@ -2,15 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  background-color: #e0e0e0
+}
+
 * {
   box-sizing: border-box;
 }
 
 .button {
-  border-radius: 50px;
-  background: #e0e0e0;
-  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-  padding: 8rem;
+  border-radius: 999px;
+  background: linear-gradient(225deg, #f0f0f0, #cacaca);
+  box-shadow:  -20px 20px 60px #bebebe,
+               20px -20px 60px #ffffff;
+  padding: 7rem;
   font-size: 1.5rem;
 
 }
