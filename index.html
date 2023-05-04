@@ -28,24 +28,24 @@
         >
           <i class="fas fa-play"></i>
         </button>
-        <div class="flex mr-16 flex-col	mt-8 ml-16" data-wave='sine' id="wave-toggle">
-          <button class="text-left	" id="sine-toggle"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m16.5 21c-3 0-4.19-4.24-5.45-8.72-.91-3.24-2.05-7.28-3.55-7.28-3.39 0-3.5 6.93-3.5 7h-2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74.86 3.06 2.03 7.26 3.53 7.26 3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9z"/></svg></button>
-          <button class="mt-6 text-left	" id="square-toggle"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-wave-square" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex mr-16 flex-col	mt-8 ml-20" data-wave='sine' id="wave-toggle">
+          <button class="text-left	" id="sine-toggle"><svg id="sine-icon" height="34" viewBox="0 0 24 24" width="34" xmlns="http://www.w3.org/2000/svg" fill="black"><path d="m16.5 21c-3 0-4.19-4.24-5.45-8.72-.91-3.24-2.05-7.28-3.55-7.28-3.39 0-3.5 6.93-3.5 7h-2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74.86 3.06 2.03 7.26 3.53 7.26 3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9z"/></svg></button>
+          <button class="mt-6 text-left	" id="square-toggle"><svg id="square-icon" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-wave-square" width="34" height="34" viewBox="0 0 24 24" stroke-width="2" stroke="black" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
             <path d="M3 12h5v8h4v-16h4v8h5" />
           </svg></button>
-          <button class="mt-6 text-left	" id="sawtooth-toggle"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m11 22v-15.17l-9 9.17v-2.83l11-11.17v15.17l9-9.17v2.83z"/></svg></button>
-          <button class="mt-16 ml-1" id="loop-toggle">
-            <svg height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>
+          <button class="mt-6 text-left	" id="sawtooth-toggle"><svg id="sawtooth-icon"  height="34" viewBox="0 0 24 24" width="34" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="m11 22v-15.17l-9 9.17v-2.83l11-11.17v15.17l9-9.17v2.83z"/></svg></button>
+          <button class="mt-16" id="loop-toggle">
+            <svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>
           </button>
           <!-- <button class="mt-6 text-left	" id="triangle-toggle">triangle</button> -->
         </div>
       </div>
       </div>
-      <div>
+      <div class="flex flex-col items-center">
       <div class="mt-16 text-xl" id="coordinates"></div>
-      <div class=" text-xl" id="note"></div>
-      <img id="audio-wave" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" alt="moving wave form" style="width:48px;height:48px;">
+      <div class="mt-4 text-xl" id="note"></div>
+      <img class="mt-4" id="audio-wave" src="/audio-wave-static.png" alt="moving wave form" style="width:48px;height:48px;">
       </div>
     </div>
     <script>
@@ -84,7 +84,7 @@ const playNote = (digit) => {
   audioWave.src='/wave.gif'
 
 
-  // Set the oscillator type to (sine, square, sawtooth, or triangle)
+  // Set the oscillator type to (sine, square, sawtooth)
   let waveform = waveDiv.getAttribute('data-wave');
 
   oscillator.type = waveform;
@@ -178,7 +178,7 @@ const loopToggle = document.getElementById("loop-toggle");
 loopToggle.addEventListener("click", () => {
 // Toggle loop state
 loop = !loop;
-loopToggle.innerHTML = loop ? `<svg height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m10 14v2l-4-3 4-3v2c2.209139 0 4-1.790861 4-4 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 3.3137085-2.6862915 6-6 6zm-3-10h-1c-2.209139 0-4 1.790861-4 4s1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6s2.6862915-6 6-6h1v-2l4 3-4 3z" fill="#293040"/></svg>` : `<svg height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>`;
+loopToggle.innerHTML = loop ? `<svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m10 14v2l-4-3 4-3v2c2.209139 0 4-1.790861 4-4 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 3.3137085-2.6862915 6-6 6zm-3-10h-1c-2.209139 0-4 1.790861-4 4s1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6s2.6862915-6 6-6h1v-2l4 3-4 3z" fill="#293040"/></svg>` : `<svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>`;
 
 // If melody is already playing, reset it to play from the beginning
 if (isPlaying) {
@@ -188,18 +188,34 @@ index = 0;
 
 
 const sineToggle = document.getElementById("sine-toggle");
+const sineIcon = document.getElementById("sine-icon");
+const squareIcon = document.getElementById("square-icon");
+const sawtoothIcon = document.getElementById("sawtooth-icon");
+
+
 sineToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','sine');
+sineIcon.style.fill = "blue";
+squareIcon.style.stroke = "black";
+sawtoothIcon.style.fill = "black";
+
+
 });
 
 const squareToggle = document.getElementById("square-toggle");
 squareToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','square');
+sineIcon.style.fill = "black";
+squareIcon.style.stroke = "blue";
+sawtoothIcon.style.fill = "black";
 
 });
 const sawtoothToggle = document.getElementById("sawtooth-toggle");
 sawtoothToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','sawtooth');
+sineIcon.style.fill = "black";
+squareIcon.style.stroke = "black";
+sawtoothIcon.style.fill = "blue";
 
 });
 // const triangleToggle = document.getElementById("triangle-toggle");
