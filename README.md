@@ -1,6 +1,7 @@
 # Geo Tune
 
-<img width="502" alt="Screen Shot 2023-05-04 at 8 24 20 PM" src="https://user-images.githubusercontent.com/32600047/236190503-57e367f1-e13a-4d1e-8f7a-c93a60743ea4.png">
+<img width="594" alt="Screen Shot 2023-05-04 at 8 25 37 PM" src="https://user-images.githubusercontent.com/32600047/236190770-697465be-07b7-44b7-a177-1da7b4d9e35e.png">
+
 
 
 Play a tune based on your precise gps location. Uses the Web Audio API and Geolocation API.
