@@ -13,5 +13,8 @@ https://geo-tune.vercel.app
 - Save sound
 - Better looking UI
 
+  [![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
+
+
 
 
