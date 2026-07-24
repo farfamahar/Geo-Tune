@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Drum Board</title>
+    <title>Geo Drone</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css"
@@ -16,9 +16,9 @@
   <body>
     <div class="flex flex-col justify-center items-center h-screen">
       <div class="mb-8">
-        <h1 class="text-4xl mb-2">Geo Tune</h1>
+        <h1 class="text-4xl mb-2">Geo Drone</h1>
         <p class="text-xl">
-          Play a different tune based on your precise location
+          Play a different drone based on your precise location
         </p>
       </div>
       <div>
@@ -28,13 +28,13 @@
         >
           <i class="fas fa-play"></i>
         </button>
-        <div class="flex mr-16 flex-col	mt-8 ml-20" data-wave='sine' id="wave-toggle">
-          <button class="text-left 	" id="sine-toggle"><svg id="sine-icon" height="34" viewBox="0 0 24 24" width="34" xmlns="http://www.w3.org/2000/svg" fill="blue"><path d="m16.5 21c-3 0-4.19-4.24-5.45-8.72-.91-3.24-2.05-7.28-3.55-7.28-3.39 0-3.5 6.93-3.5 7h-2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74.86 3.06 2.03 7.26 3.53 7.26 3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9z"/></svg></button>
+        <div class="flex mr-16 flex-col	mt-8 ml-20" data-wave='sawtooth' id="wave-toggle">
+          <button class="text-left 	" id="sine-toggle"><svg id="sine-icon" height="34" viewBox="0 0 24 24" width="34" xmlns="http://www.w3.org/2000/svg" fill="black"><path d="m16.5 21c-3 0-4.19-4.24-5.45-8.72-.91-3.24-2.05-7.28-3.55-7.28-3.39 0-3.5 6.93-3.5 7h-2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74.86 3.06 2.03 7.26 3.53 7.26 3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9z"/></svg></button>
           <button class="mt-6 text-left	" id="square-toggle"><svg id="square-icon" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-wave-square" width="34" height="34" viewBox="0 0 24 24" stroke-width="2" stroke="black" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
             <path d="M3 12h5v8h4v-16h4v8h5" />
           </svg></button>
-          <button class="mt-6 text-left	" id="sawtooth-toggle"><svg id="sawtooth-icon"  height="34" viewBox="0 0 24 24" width="34" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="m11 22v-15.17l-9 9.17v-2.83l11-11.17v15.17l9-9.17v2.83z"/></svg></button>
+          <button class="mt-6 text-left	" id="sawtooth-toggle"><svg id="sawtooth-icon"  height="34" viewBox="0 0 24 24" width="34" fill="blue" xmlns="http://www.w3.org/2000/svg"><path d="m11 22v-15.17l-9 9.17v-2.83l11-11.17v15.17l9-9.17v2.83z"/></svg></button>
           <!-- <button class="mt-6 text-left	" id="triangle-toggle">triangle</button> -->
         </div>
       </div>
@@ -60,59 +60,59 @@ const drumButtons = document.querySelectorAll(".drum-button");
 const coordinates = document.getElementById("coordinates");
 const note = document.getElementById("note");
 let isPlaying = false;
-let index = 0;
 let waveDiv = document.getElementById('wave-toggle');
 let audioWave = document.getElementById('audio-wave')
 
+// Leading digits of lat/long (degrees) place the drone in the world
+const MACRO_DIGIT_COUNT = 2;
+// Trailing digits of lat/long (finest decimal places) are what shift as you walk
+const MICRO_DIGIT_COUNT = 2;
+// How long a voice takes to glide to a new location's pitch
+const GLIDE_SECONDS = 4;
 
-// Function to play a single note
-const playNote = (digit) => {
-  // Create a new OscillatorNode object
-  const oscillator = audioContext.createOscillator();
+// Shared effects chain that every voice runs through:
+// lowpass filter (with a slow LFO sweep for movement) -> feedback delay (reverb-like tail) -> output
+const masterGain = audioContext.createGain();
+masterGain.gain.value = 0.25;
 
-  // Generate a frequency based on the digit value
-  const frequency = 200 + digit * 100;
+const filter = audioContext.createBiquadFilter();
+filter.type = "lowpass";
+filter.frequency.value = 800;
+filter.Q.value = 0.7;
 
-  // Set the oscillator frequency to the calculated frequency
-  oscillator.frequency.setValueAtTime(
-    frequency,
-    audioContext.currentTime
-  );
+const filterLFO = audioContext.createOscillator();
+filterLFO.frequency.value = 0.06;
+const filterLFODepth = audioContext.createGain();
+filterLFODepth.gain.value = 300;
+filterLFO.connect(filterLFODepth);
+filterLFODepth.connect(filter.frequency);
+filterLFO.start();
 
-  audioWave.src='/wave.gif'
+const delay = audioContext.createDelay(2);
+delay.delayTime.value = 0.4;
+const delayFeedback = audioContext.createGain();
+delayFeedback.gain.value = 0.35;
+const delayWet = audioContext.createGain();
+delayWet.gain.value = 0.3;
 
+filter.connect(masterGain);
+masterGain.connect(audioContext.destination);
+masterGain.connect(delay);
+delay.connect(delayFeedback);
+delayFeedback.connect(delay);
+delay.connect(delayWet);
+delayWet.connect(audioContext.destination);
 
-  // Set the oscillator type to (sine, square, sawtooth)
-  let waveform = waveDiv.getAttribute('data-wave');
+// Map a 0-9 digit to a low, drone-register frequency
+const digitToFrequency = (digit) => 55 + digit * 12;
 
-  oscillator.type = waveform;
+// Currently sounding voices, one oscillator + gain per chord tone
+let voices = [];
 
-  // Add an envelope to the sound to shape its amplitude over time
-  const gainNode = audioContext.createGain();
-  gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-  gainNode.gain.linearRampToValueAtTime(
-    0.8,
-    audioContext.currentTime + 0.05
-  );
-  gainNode.gain.exponentialRampToValueAtTime(
-    0.1,
-    audioContext.currentTime + 0.2
-  );
-  gainNode.connect(audioContext.destination);
-  oscillator.connect(gainNode);
-
-  // Start the oscillator
-  oscillator.start();
-
-  // Stop the oscillator and disconnect nodes after 1 second
-  setTimeout(() => {
-    oscillator.stop();
-    oscillator.disconnect();
-    gainNode.disconnect();
-  }, 500);
-};
-
-// Convert a geolocation position into the digits + display text used for the melody
+// Convert a geolocation position into chord digits + display text.
+// Macro digits (lat/long degrees) give the drone a distinct character per
+// region of the world; micro digits (finest decimal places) are what drift
+// as you walk around within that region.
 const getPositionData = (position) => {
   const { latitude, longitude } = position.coords;
   const text = `Latitude : ${latitude.toFixed(
@@ -120,66 +120,97 @@ const getPositionData = (position) => {
   )}, Longitude: ${longitude.toFixed(8)}`;
   const latitudeDigits = String(latitude.toFixed(8)).match(/\d/g);
   const longitudeDigits = String(longitude.toFixed(8)).match(/\d/g);
-  return { digits: [...latitudeDigits, ...longitudeDigits], text };
+
+  const macroDigits = [
+    ...latitudeDigits.slice(0, MACRO_DIGIT_COUNT),
+    ...longitudeDigits.slice(0, MACRO_DIGIT_COUNT),
+  ];
+  const microDigits = [
+    ...latitudeDigits.slice(-MICRO_DIGIT_COUNT),
+    ...longitudeDigits.slice(-MICRO_DIGIT_COUNT),
+  ];
+
+  return { chordDigits: [...macroDigits, ...microDigits], text };
 };
 
-// Always holds the most recently seen location
-let currentLocation = null;
 let watchId = null;
-let timeoutId = null;
 
-// Keep tracking location in the background so the loop can pick up
-// new coordinates as they arrive (e.g. while walking)
+// Keep tracking location so the drone can keep drifting as you walk
 const startLocationWatch = () => {
   if (watchId !== null || !navigator.geolocation) return;
   watchId = navigator.geolocation.watchPosition(
-    (position) => {
-      currentLocation = getPositionData(position);
-    },
+    (position) => updateDrone(getPositionData(position)),
     (error) => console.error(error),
     { enableHighAccuracy: true }
   );
 };
 
-// Function to play a melody based on a location's digits, looping forever
-const playMelody = (location) => {
-index = 0;
-let activeLocation = location;
-coordinates.textContent = activeLocation.text;
+// Glide each voice to the new location's chord instead of retriggering it
+const updateDrone = ({ chordDigits, text }) => {
+  coordinates.textContent = text;
+  note.textContent = chordDigits.join(" ");
+  const now = audioContext.currentTime;
+  chordDigits.forEach((digit, i) => {
+    const voice = voices[i];
+    if (!voice) return;
+    voice.oscillator.frequency.exponentialRampToValueAtTime(
+      digitToFrequency(digit),
+      now + GLIDE_SECONDS
+    );
+  });
+};
 
-const playNextNote = () => {
-const digit = activeLocation.digits[index];
-note.textContent = `${digit}`;
-playNote(digit);
+const startDrone = ({ chordDigits, text }) => {
+  coordinates.textContent = text;
+  note.textContent = chordDigits.join(" ");
+  const waveform = waveDiv.getAttribute('data-wave');
+  const now = audioContext.currentTime;
 
-index++;
+  voices = chordDigits.map((digit, i) => {
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = waveform;
+    oscillator.frequency.value = digitToFrequency(digit);
+    // Spread voices slightly out of tune so the drone chorus/beats instead of sounding flat
+    oscillator.detune.value = (i - (chordDigits.length - 1) / 2) * 6;
 
-// Loop back to the start, picking up the latest location for this pass
-if (index >= activeLocation.digits.length) {
-  index = 0;
-  if (currentLocation) {
-    activeLocation = currentLocation;
-    coordinates.textContent = activeLocation.text;
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.6, now + 3);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(filter);
+    oscillator.start();
+
+    return { oscillator, gainNode };
+  });
+
+  audioWave.src = '/wave.gif';
+  isPlaying = true;
+};
+
+// Fade voices out and stop them, then stop location tracking
+const stopDrone = () => {
+  const now = audioContext.currentTime;
+  voices.forEach(({ oscillator, gainNode }) => {
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+    gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
+    oscillator.stop(now + 1.6);
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      gainNode.disconnect();
+    };
+  });
+  voices = [];
+
+  isPlaying = false;
+  note.textContent = "";
+  audioWave.src = '/audio-wave-static.png';
+
+  if (watchId !== null) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
   }
-}
-
-timeoutId = setTimeout(playNextNote, 200);
-};
-
-isPlaying = true;
-playNextNote();
-};
-
-// Stop playback and location tracking
-const stopMelody = () => {
-clearTimeout(timeoutId);
-isPlaying = false;
-note.textContent = "";
-audioWave.src = '/audio-wave-static.png';
-if (watchId !== null) {
-  navigator.geolocation.clearWatch(watchId);
-  watchId = null;
-}
 };
 
 // Event listener for drum buttons (play/stop toggle)
@@ -187,7 +218,7 @@ drumButtons.forEach((button) => {
 button.addEventListener("click", () => {
 
 if (isPlaying) {
-  stopMelody();
+  stopDrone();
   return;
 }
 
@@ -197,9 +228,8 @@ if (!navigator.geolocation) {
 }
 
 navigator.geolocation.getCurrentPosition((position) => {
-  currentLocation = getPositionData(position);
+  startDrone(getPositionData(position));
   startLocationWatch();
-  playMelody(currentLocation);
 });
 });
 });
@@ -211,8 +241,16 @@ const squareIcon = document.getElementById("square-icon");
 const sawtoothIcon = document.getElementById("sawtooth-icon");
 
 
+// Apply a waveform change to any voices currently sounding
+const setLiveWaveform = (waveform) => {
+voices.forEach(({ oscillator }) => {
+  oscillator.type = waveform;
+});
+};
+
 sineToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','sine');
+setLiveWaveform('sine');
 sineIcon.style.fill = "blue";
 squareIcon.style.stroke = "black";
 sawtoothIcon.style.fill = "black";
@@ -223,6 +261,7 @@ sawtoothIcon.style.fill = "black";
 const squareToggle = document.getElementById("square-toggle");
 squareToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','square');
+setLiveWaveform('square');
 sineIcon.style.fill = "black";
 squareIcon.style.stroke = "blue";
 sawtoothIcon.style.fill = "black";
@@ -231,6 +270,7 @@ sawtoothIcon.style.fill = "black";
 const sawtoothToggle = document.getElementById("sawtooth-toggle");
 sawtoothToggle.addEventListener("click", () => {
 waveDiv.setAttribute('data-wave','sawtooth');
+setLiveWaveform('sawtooth');
 sineIcon.style.fill = "black";
 squareIcon.style.stroke = "black";
 sawtoothIcon.style.fill = "blue";
