@@ -35,9 +35,6 @@
             <path d="M3 12h5v8h4v-16h4v8h5" />
           </svg></button>
           <button class="mt-6 text-left	" id="sawtooth-toggle"><svg id="sawtooth-icon"  height="34" viewBox="0 0 24 24" width="34" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="m11 22v-15.17l-9 9.17v-2.83l11-11.17v15.17l9-9.17v2.83z"/></svg></button>
-          <button class="mt-16" id="loop-toggle">
-            <svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>
-          </button>
           <!-- <button class="mt-6 text-left	" id="triangle-toggle">triangle</button> -->
         </div>
       </div>
@@ -62,8 +59,6 @@ const drumButtons = document.querySelectorAll(".drum-button");
 // Get the coordinates element
 const coordinates = document.getElementById("coordinates");
 const note = document.getElementById("note");
-// Initialize loop state
-let loop = false;
 let isPlaying = false;
 let index = 0;
 let waveDiv = document.getElementById('wave-toggle');
@@ -117,76 +112,96 @@ const playNote = (digit) => {
   }, 500);
 };
 
-// Function to play a melody based on an array of digits
-const playMelody = (digits) => {
-index = 0;
+// Convert a geolocation position into the digits + display text used for the melody
+const getPositionData = (position) => {
+  const { latitude, longitude } = position.coords;
+  const text = `Latitude : ${latitude.toFixed(
+    8
+  )}, Longitude: ${longitude.toFixed(8)}`;
+  const latitudeDigits = String(latitude.toFixed(8)).match(/\d/g);
+  const longitudeDigits = String(longitude.toFixed(8)).match(/\d/g);
+  return { digits: [...latitudeDigits, ...longitudeDigits], text };
+};
 
-// Loop through each digit and play a note based on its value
+// Always holds the most recently seen location
+let currentLocation = null;
+let watchId = null;
+let timeoutId = null;
+
+// Keep tracking location in the background so the loop can pick up
+// new coordinates as they arrive (e.g. while walking)
+const startLocationWatch = () => {
+  if (watchId !== null || !navigator.geolocation) return;
+  watchId = navigator.geolocation.watchPosition(
+    (position) => {
+      currentLocation = getPositionData(position);
+    },
+    (error) => console.error(error),
+    { enableHighAccuracy: true }
+  );
+};
+
+// Function to play a melody based on a location's digits, looping forever
+const playMelody = (location) => {
+index = 0;
+let activeLocation = location;
+coordinates.textContent = activeLocation.text;
+
 const playNextNote = () => {
-const digit = digits[index];
+const digit = activeLocation.digits[index];
 note.textContent = `${digit}`;
 playNote(digit);
 
 index++;
 
-// If looping, reset the index to 0 when it reaches the end
-if (loop && index >= digits.length) {
+// Loop back to the start, picking up the latest location for this pass
+if (index >= activeLocation.digits.length) {
   index = 0;
+  if (currentLocation) {
+    activeLocation = currentLocation;
+    coordinates.textContent = activeLocation.text;
+  }
 }
 
-// If not at the end of the melody, schedule the next note to play
-if (index < digits.length || loop) {
-  setTimeout(playNextNote, 200);
-} else {
-  // Reset playing state when melody is finished
-  isPlaying = false;
-  audioWave.src='/audio-wave-static.png'
-
-}
+timeoutId = setTimeout(playNextNote, 200);
 };
 
-// Start playing the melody
 isPlaying = true;
 playNextNote();
 };
 
-// Event listener for drum buttons
+// Stop playback and location tracking
+const stopMelody = () => {
+clearTimeout(timeoutId);
+isPlaying = false;
+note.textContent = "";
+audioWave.src = '/audio-wave-static.png';
+if (watchId !== null) {
+  navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+}
+};
+
+// Event listener for drum buttons (play/stop toggle)
 drumButtons.forEach((button) => {
 button.addEventListener("click", () => {
 
-// Get user's current position and display coordinates
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition((position) => {
-    const { latitude, longitude } = position.coords;
-    coordinates.textContent = `Latitude : ${latitude.toFixed(
-      8
-    )}, Longitude: ${longitude.toFixed(8)}`;
-    // Play a melody based on the latitude and longitude digits
-    const latitudeDigits = String(latitude.toFixed(8)).match(/\d/g);
-    const longitudeDigits = String(longitude.toFixed(8)).match(/\d/g);
-    const digits = [...latitudeDigits, ...longitudeDigits];
-    if(!isPlaying){
-    playMelody(digits);
-    }
-  });
-} else {
-  // Geolocation is not supported
-  alert("Geolocation is not supported by this browser.");
-}
-});
-});
-
-// Event listener for loop button
-const loopToggle = document.getElementById("loop-toggle");
-loopToggle.addEventListener("click", () => {
-// Toggle loop state
-loop = !loop;
-loopToggle.innerHTML = loop ? `<svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m10 14v2l-4-3 4-3v2c2.209139 0 4-1.790861 4-4 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 3.3137085-2.6862915 6-6 6zm-3-10h-1c-2.209139 0-4 1.790861-4 4s1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6s2.6862915-6 6-6h1v-2l4 3-4 3z" fill="#293040"/></svg>` : `<svg height="30" viewBox="0 0 16 16" width="30" xmlns="http://www.w3.org/2000/svg"><path d="m12.1075139 11.4004071c1.1360624-.7056069 1.8924861-1.96467089 1.8924861-3.4004071 0-2.00317196-1.4724897-3.66242552-3.394119-3.95441072l1.394119-1.04558928-1.2756257-.95671924c2.9721294.35765378 5.2756257 2.88818131 5.2756257 5.95671924 0 1.98670188-.9655837 3.7478796-2.4530556 4.8398376l1.806609 1.806609-.7071068.7071068-13.99999999-14.00000001.70710678-.70710678 1.97807886 1.97807886c.8037287-.3997377 1.70979722-.62452547 2.66836775-.62452547h1v-2l4 3-4 3v-2h-1c-.39272699 0-.77223492.05659751-1.13081225.16208097zm-3.31969695-.4912698 2.86136745 2.8613674c-.523979.149468-1.077236.2294953-1.6491844.2294953v2l-4-3zm-5.67625775-5.67625776c-.68850883.71850351-1.1115592 1.69340763-1.1115592 2.76712046 0 2.209139 1.790861 4 4 4h.33333333l-1.33333333 1 1.33333333 1h-.33333333c-3.3137085 0-6-2.6862915-6-6 0-1.62599864.64679237-3.10093082 1.69713011-4.18154955z" fill="#293040"/></svg>`;
-
-// If melody is already playing, reset it to play from the beginning
 if (isPlaying) {
-index = 0;
+  stopMelody();
+  return;
 }
+
+if (!navigator.geolocation) {
+  alert("Geolocation is not supported by this browser.");
+  return;
+}
+
+navigator.geolocation.getCurrentPosition((position) => {
+  currentLocation = getPositionData(position);
+  startLocationWatch();
+  playMelody(currentLocation);
+});
+});
 });
 
 
